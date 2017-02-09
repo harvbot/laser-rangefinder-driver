@@ -1,40 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Ports;
 using System.Linq;
-using System.Management;
-using System.Text;
 using System.Threading.Tasks;
-using Harvbot.Rangefinder.Driver;
+using System.Windows.Forms;
 
 namespace Harvbot.Rangefinder.TestApp
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
         {
-            using (var laser = new RangefinderDriver("COM3"))
-            {
-                laser.Measurement += Laser_Measurement;
-                laser.Open();
-
-                Console.WriteLine("Press any key to finish measurement and turn laser off");
-                laser.StartContinuousMeasurement();
-
-                Console.ReadKey();
-            }
-        }
-
-        private static void Laser_Measurement(object sender, RangefinderMeasurementArgs e)
-        {
-            if (e.Success)
-            {
-                Console.WriteLine(string.Format("Measurement: {0}m", e.Range));
-            }
-            else
-            {
-                Console.WriteLine("Measurement: error");
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
         }
     }
 }
