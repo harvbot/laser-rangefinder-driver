@@ -1,6 +1,6 @@
 package com.harvbot.rangefinder;
 
-public interface RangefinderMeasurementListener {
+public abstract class RangefinderMeasurementListener {
 
-    void onMeasurement(boolean isError, double value);
+    public abstract void onMeasurement(boolean isError, double value);
 }

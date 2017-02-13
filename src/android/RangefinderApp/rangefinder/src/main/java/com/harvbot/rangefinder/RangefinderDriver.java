@@ -146,7 +146,7 @@ public class RangefinderDriver {
         if (read == buffer.length)
         {
             if (buffer[0] == RangefinderDriver.DefaultAddr &&
-                    buffer[1] == 0x06 && buffer[2] == 0x83 && buffer[6] == 0x2E)
+                    buffer[1] == 0x06 && buffer[2] == -0x7D && buffer[6] == 0x2E)
             {
                 double value = 0;
 
@@ -158,16 +158,16 @@ public class RangefinderDriver {
                 value += (buffer[8] - 48) * 0.01;
                 value += (buffer[9] - 48) * 0.001;
 
-                this.onMeasurement(true, value);
+                this.onMeasurement(false, value);
             }
             else
             {
-                this.onMeasurement(false, -1);
+                this.onMeasurement(true, -1);
             }
         }
         else
         {
-            this.onMeasurement(false, -1);
+            this.onMeasurement(true, -1);
         }
     }
 
