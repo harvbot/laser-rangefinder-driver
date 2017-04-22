@@ -1,4 +1,4 @@
-package com.harvbot.rangefinderapp;
+package com.harvbot.rangefinder.app;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

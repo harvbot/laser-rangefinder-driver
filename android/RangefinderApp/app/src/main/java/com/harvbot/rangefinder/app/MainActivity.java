@@ -1,9 +1,10 @@
-package com.harvbot.rangefinderapp;
+package com.harvbot.rangefinder.app;
 
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.XmlResourceParser;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,10 +13,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.harvbot.rangefinder.RangefinderDriver;
 import com.harvbot.rangefinder.RangefinderMeasurementListener;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private UsbManager usbManager;
 
-    private UsbDevice laserDevice;
+    private UsbDevice botDevice;
 
     private ArrayAdapter<String> listOfMeasurementAdapter;
 
@@ -73,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void startMeasurement() {
 
-        if(this.laserDevice != null) {
+        if(this.botDevice != null) {
             PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
             this.registerReceiver(mUsbReceiver, filter);
 
-            usbManager.requestPermission(this.laserDevice, mPermissionIntent);
+            usbManager.requestPermission(this.botDevice, mPermissionIntent);
         }
     }
 
@@ -90,19 +92,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void findRangefinderDevice()
-    {
+    private void findRangefinderDevice() {
+
+        int productId = 0;
+        int vendorId = 0;
+        int eventType = -1;
+        XmlResourceParser document = getResources().getXml(com.harvbot.rangefinder.app.R.xml.device_filter);
+
+        while(eventType != XmlResourceParser.END_DOCUMENT)
+        {
+            String name = document.getText();
+
+            try {
+                if (document.getEventType() == XmlResourceParser.START_TAG) {
+                    String s = document.getName();
+
+                    if (s.equals("usb-device")) {
+                        vendorId = Integer.parseInt(document.getAttributeValue(null, "vendor-id"));
+                        productId = Integer.parseInt(document.getAttributeValue(null, "product-id"));
+                        break;
+                    }
+                }
+
+                eventType = document.next();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Iterator<UsbDevice> deviceIterator = usbManager.getDeviceList().values().iterator();
 
         while (deviceIterator.hasNext())
         {
             UsbDevice device = deviceIterator.next();
 
-            if(device.getVendorId()==6790 && device.getProductId()==29987)
+            // Find speicified divce.
+            if(device.getVendorId()== vendorId && device.getProductId()==productId)
             {
-                this.laserDevice = device;
+                this.botDevice = device;
                 break;
             }
+        }
+
+        if(this.botDevice != null) {
+            // Request usb device permission.
+            PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            this.registerReceiver(mUsbReceiver, filter);
+
+            usbManager.requestPermission(this.botDevice, mPermissionIntent);
         }
     }
 

@@ -1,14 +1,17 @@
 #include "HarvbotRangefinder.h"
 
-HarvbotRangefinder::HarvbotRangefinder(HardwareSerial* serial) {
+HarvbotRangefinder::HarvbotRangefinder(HardwareSerial* serial)
+{
 	this->m_Serial=serial;
 	this->m_Serial->begin(HarvbotRangefinder_BaudRate);
 }
 
-HarvbotRangefinder::~HarvbotRangefinder(){
+HarvbotRangefinder::~HarvbotRangefinder()
+{
 }
 
-float HarvbotRangefinder::read() {
+float HarvbotRangefinder::read() 
+{
 	byte* buffer = new byte[11];
 	int read = this->m_Serial->readBytes(buffer, 11);
 
@@ -35,15 +38,15 @@ float HarvbotRangefinder::read() {
 	return result;
 }
 
-void HarvbotRangefinder::start() {
-
+void HarvbotRangefinder::start() 
+{
 	byte command[] = {HarvbotRangefinder_DefaultAddr, 0x06, 0x03, 0x77};
 
 	this->m_Serial->write(command, 4);
 }
 
-void HarvbotRangefinder::stop() {
-
+void HarvbotRangefinder::stop() 
+{
 	byte command[] = {HarvbotRangefinder_DefaultAddr, 0x04, 0x02, 0x7A};
 
 	this->m_Serial->write(command, 4);
