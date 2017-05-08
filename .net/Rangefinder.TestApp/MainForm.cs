@@ -74,19 +74,22 @@ namespace Harvbot.Rangefinder.TestApp
 
         private void Driver_Measurement(object sender, RangefinderMeasurementArgs e)
         {
-            if (this.InvokeRequired)
+            if (!this.IsDisposed)
             {
-                this.Invoke(new EventHandler<RangefinderMeasurementArgs>(this.Driver_Measurement), new object[] { sender, e });
-            }
-            else
-            {
-                if (e.Success)
+                if (this.InvokeRequired)
                 {
-                    this.LsMeasurement.Items.Add(e.Range.ToString());
+                    this.Invoke(new EventHandler<RangefinderMeasurementArgs>(this.Driver_Measurement), new object[] { sender, e });
                 }
                 else
                 {
-                    this.LsMeasurement.Items.Add("Error");
+                    if (e.Success)
+                    {
+                        this.LsMeasurement.Items.Add(e.Range.ToString());
+                    }
+                    else
+                    {
+                        this.LsMeasurement.Items.Add("Error");
+                    }
                 }
             }
         }

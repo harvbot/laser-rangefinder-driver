@@ -1,4 +1,4 @@
-= HarvbotArm for Arduino =
+= Harvbot laser rangefinder driver for Arduino =
 
 
 
