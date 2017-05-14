@@ -1,0 +1,3 @@
+[submodule "android/RangefinderApp/usb-serial-for-android"]
+	path = android/RangefinderApp/usb-serial-for-android
+	url = https://github.com/mik3y/usb-serial-for-android
